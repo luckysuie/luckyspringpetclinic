@@ -6,5 +6,5 @@ pipeline {
                 git branch: 'prod', url: 'https://github.com/luckysuie/luckyspringpetclinic.git'
             }
         }
-    }-
+    }
 }

@@ -58,7 +58,12 @@ pipeline {
                 }
             }
         }
-
+        stage('Maven Package') {
+            steps {
+                echo 'Packaging the project...'
+                sh 'mvn package'
+            }
+        }
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image...'

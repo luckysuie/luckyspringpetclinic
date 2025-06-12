@@ -46,13 +46,15 @@ pipeline {
                 }
             }
         }
-        stage('Quality Gate') {
+        stage('Sonar Quality Gate') {
             steps {
-                echo 'Waiting for SonarQube Quality Gate...'
-                timeout(time: 10, unit: 'MINUTES') {
-                waitForQualityGate abortPipeline: true credentialsId: 'sonartoken'
+                echo 'Waiting for SonarQube quality gate...'
+                steps {
+                    timeout(time: 1, unit: 'MINUTES') {
+                        waitForQualityGate abortPipeline: true, credentialsId: 'sonartoken'
+                    }
                 }
-            }
+                }
+            }       
         }
     }
-}

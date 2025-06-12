@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = 'jenkins-springpetclinic' // Define your image name
+        BUILD_TAG = 'latest' // Define a build tag or use env.BUILD_NUMBER
+    }
+
     stages {
         stage('Checkout From Git') {
             steps {
@@ -46,19 +51,23 @@ pipeline {
                 }
             }
         }
+
         stage('Sonar Quality Gate') {
             steps {
                 echo 'Waiting for SonarQube quality gate...'
-                    timeout(time: 1, unit: 'MINUTES') {
-                        waitForQualityGate abortPipeline: true, credentialsId: 'sonartoken'
-                    }
+                timeout(time: 1, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true credentialsId: 'sonartoken'
                 }
-        }   
-        stage('Build Docker Image') {
-                    steps {
-                        echo 'Building Docker image...'
-                        docker.build ("$IMAGE_NAME:$BUILD_TAG")
-                    }
-                }
-            }       
+            }
         }
+
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image...'
+                script {
+                    docker.build("${IMAGE_NAME}:${BUILD_TAG}")
+                }
+            }
+        }
+    }
+}

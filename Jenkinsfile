@@ -1,11 +1,5 @@
 pipeline {
     agent any
-
-    environment {
-        IMAGE_NAME = 'jenkins-springpetclinic' // Define your image name
-        BUILD_TAG = 'latest' // Define a build tag or use env.BUILD_NUMBER
-    }
-
     stages {
         stage('Checkout From Git') {
             steps {
@@ -56,7 +50,7 @@ pipeline {
             steps {
                 echo 'Waiting for SonarQube quality gate...'
                 timeout(time: 1, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true credentialsId: 'sonartoken'
+                waitForQualityGate abortPipeline: true credentialsId: 'sonartoken'
                 }
             }
         }

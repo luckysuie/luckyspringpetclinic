@@ -50,7 +50,7 @@ pipeline {
             steps {
                 echo 'Waiting for SonarQube Quality Gate...'
                 timeout(time: 10, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true credentialsId: 'sonartoken'
+                waitForQualityGate abortPipeline: true credentialsId: 'sonartoken'
                 }
             }
         }

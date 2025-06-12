@@ -1,6 +1,8 @@
-FROM jetty:11-jdk17
+FROM eclipse-temurin:17-jdk-jammy
+WORKDIR /app
 
-# Copy the WAR file (named spring-petclinic.war) into Jetty
-COPY target/spring-petclinic.war /var/lib/jetty/webapps/ROOT.war
+COPY target/spring-petclinic-3.5.0-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

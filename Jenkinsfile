@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    options {
+        // "Restart from stage" in Blue Ocean UI
+        restartFromStages()
+    }
     environment {
     IMAGE_NAME = 'my-app-image'
     BUILD_TAG = "${BUILD_NUMBER}"

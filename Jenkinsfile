@@ -69,12 +69,12 @@ pipeline {
         sshagent(['ubuntu-ssh']) {
             sh """
                 echo '🚀 Copying JAR to remote server...'
-                scp -o StrictHostKeyChecking=no target/spring-petclinic-*.jar ubuntu@34.135.142.241:/home/ubuntu/app.jar
+                scp -o StrictHostKeyChecking=no target/spring-petclinic-*.jar lucky@34.135.142.241:/home/lucky/app.jar
 
                 echo '🔁 Restarting app on remote server...'
                 ssh -o StrictHostKeyChecking=no ubuntu@34.135.142.241 '
                     pkill -f "java -jar" || true
-                    nohup java -jar /home/ubuntu/app.jar > /home/ubuntu/app.log 2>&1 &
+                    nohup java -jar /home/lucky/app.jar > /home/lucky/app.log 2>&1 &
                 '
             """
         }

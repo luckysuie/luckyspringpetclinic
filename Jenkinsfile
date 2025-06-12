@@ -65,19 +65,23 @@ pipeline {
             }
         } 
         stage('Deploy JAR to VM') {
-    steps {
-        sshagent(['ubuntu-ssh']) {
-            sh """
-                echo '🚀 Copying JAR to remote server...'
-                scp -o StrictHostKeyChecking=no target/spring-petclinic-*.jar lucky@34.135.142.241:/home/lucky/app.jar
-
-                echo '🔁 Restarting app on remote server...'
-                ssh -o StrictHostKeyChecking=no ubuntu@34.135.142.241 '
-                    pkill -f "java -jar" || true
-                    nohup java -jar /home/lucky/app.jar > /home/lucky/app.log 2>&1 &
-                '
-            """
+     stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image...'
+                script {
+                    docker.build("${IMAGE_NAME}:${BUILD_TAG}")
+                }
+            }
         }
+}
+        stage('Run Docker Container') {
+    steps {
+        echo 'Running Docker container on port 9090...'
+        sh """
+            docker stop ${IMAGE_NAME} || true
+            docker rm ${IMAGE_NAME} || true
+            docker run -d --name ${IMAGE_NAME} -p 9090:8080 ${IMAGE_NAME}:${BUILD_TAG}
+        """
     }
 }
 

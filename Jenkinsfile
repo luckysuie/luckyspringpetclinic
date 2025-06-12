@@ -64,7 +64,6 @@ pipeline {
                 sh 'mvn package'
             }
         } 
-        stage('Deploy JAR to VM') {
      stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image...'

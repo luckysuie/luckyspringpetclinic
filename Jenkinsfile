@@ -24,12 +24,22 @@ pipeline {
                 sh 'trivy fs --output trivy-report.txt --severity HIGH,CRITICAL .'
             }
         }
-        stage('sonar Analysis')
-        {
+         stage('Sonar Analysis') {
+            environment {
+                SCANNER_HOME = tool 'sonarscanner'
+            }
             steps {
-                echo 'Running SonarQube analysis...'
-                sh 'mvn sonar:sonar -Dsonar.organization=Sonarproject -Dsonar.projectKey=luckysonarproject456_jenkins -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=yea1725c30036484241e88affb6185ee709d5ca8e'
+                withSonarQubeEnv('sonarserver') {
+                    sh '''
+                    $SCANNER_HOME/bin/sonarscanner \
+                    -Dsonar.organization=Sonarproject \
+                    -Dsonar.projectName=jenkins \
+                    -Dsonar.projectKey=sonarproject456_jenkins \
+                    -Dsonar.java.binaries=. \
+                    -Dsonar.exclusions=**/trivy-report.txt
+                    '''
+                }
             }
         }
+        }
     }
-}

@@ -21,7 +21,7 @@ pipeline {
         stage ('Trivy Scan') {
             steps {
                 echo 'Running Trivy scan...'
-                sh 'trivy fs --exit-code 0 --severity HIGH,CRITICAL .'
+                sh 'trivy fs --output trivy-report.txt --severity HIGH,CRITICAL .'
             }
         }
     }

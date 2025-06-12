@@ -2,7 +2,7 @@ pipeline {
     agent any
     options {
         // "Restart from stage" in Blue Ocean UI
-        restartFromStages()
+        restartableStages()
     }
     environment {
     IMAGE_NAME = 'my-app-image'

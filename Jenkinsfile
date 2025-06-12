@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Checkout From Git') {
             steps {
-                git branch: 'prod', url: 'https://github.com/luckysuie/luckyspringpetclinic.git'
+                git branch: 'main', url: 'https://github.com/luckysuie/luckyspringpetclinic.git'
             }
         }
     }

@@ -63,14 +63,23 @@ pipeline {
                 echo 'Packaging the project...'
                 sh 'mvn package'
             }
+        } 
+        stage('Deploy JAR to VM') {
+    steps {
+        sshagent(['ubuntu-ssh']) {
+            sh """
+                echo '🚀 Copying JAR to remote server...'
+                scp -o StrictHostKeyChecking=no target/spring-petclinic-*.jar ubuntu@34.135.142.241:/home/ubuntu/app.jar
+
+                echo '🔁 Restarting app on remote server...'
+                ssh -o StrictHostKeyChecking=no ubuntu@34.135.142.241 '
+                    pkill -f "java -jar" || true
+                    nohup java -jar /home/ubuntu/app.jar > /home/ubuntu/app.log 2>&1 &
+                '
+            """
         }
-        stage('Build Docker Image') {
-            steps {
-                echo 'Building Docker image...'
-                script {
-                    docker.build("${IMAGE_NAME}:${BUILD_TAG}")
-                }
-            }
-        }
+    }
+}
+
     }
 }

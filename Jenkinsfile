@@ -1,9 +1,11 @@
 pipeline {
     agent any
+
     environment {
-    IMAGE_NAME = 'my-app-image'
-    BUILD_TAG = "${BUILD_NUMBER}"
-}
+        IMAGE_NAME = 'my-app-image'
+        BUILD_TAG = "${BUILD_NUMBER}"
+    }
+
     stages {
         stage('Checkout From Git') {
             steps {
@@ -39,12 +41,12 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonarserver') {
                     sh '''
-                    $SCANNER_HOME/bin/sonar-scanner \
-                    -Dsonar.organization=sonarproject456 \
-                    -Dsonar.projectName=jenkins \
-                    -Dsonar.projectKey=sonarproject456_jenkins \
-                    -Dsonar.java.binaries=. \
-                    -Dsonar.exclusions=**/trivy-report.txt
+                        $SCANNER_HOME/bin/sonar-scanner \
+                        -Dsonar.organization=sonarproject456 \
+                        -Dsonar.projectName=jenkins \
+                        -Dsonar.projectKey=sonarproject456_jenkins \
+                        -Dsonar.java.binaries=. \
+                        -Dsonar.exclusions=**/trivy-report.txt
                     '''
                 }
             }
@@ -54,17 +56,19 @@ pipeline {
             steps {
                 echo 'Waiting for SonarQube quality gate...'
                 timeout(time: 1, unit: 'MINUTES') {
-                waitForQualityGate abortPipeline: true, credentialsId: 'sonartoken'
+                    waitForQualityGate abortPipeline: true, credentialsId: 'sonartoken'
                 }
             }
         }
+
         stage('Maven Package') {
             steps {
                 echo 'Packaging the project...'
                 sh 'mvn package'
             }
-        } 
-     stage('Build Docker Image') {
+        }
+
+        stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image...'
                 script {
@@ -72,17 +76,16 @@ pipeline {
                 }
             }
         }
-}
-        stage('Run Docker Container') {
-    steps {
-        echo 'Running Docker container on port 9090...'
-        sh """
-            docker stop ${IMAGE_NAME} || true
-            docker rm ${IMAGE_NAME} || true
-            docker run -d --name ${IMAGE_NAME} -p 9090:8080 ${IMAGE_NAME}:${BUILD_TAG}
-        """
-    }
-}
 
+        stage('Run Docker Container') {
+            steps {
+                echo 'Running Docker container on port 9090...'
+                sh """
+                    docker stop ${IMAGE_NAME} || true
+                    docker rm ${IMAGE_NAME} || true
+                    docker run -d --name ${IMAGE_NAME} -p 9090:8080 ${IMAGE_NAME}:${BUILD_TAG}
+                """
+            }
+        }
     }
 }

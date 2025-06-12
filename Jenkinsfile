@@ -30,14 +30,14 @@ pipeline {
             }
             steps {
                 withSonarQubeEnv('sonarserver') {
-                    sh '''
-                    $SCANNER_HOME/bin/sonarscanner \
-                    -Dsonar.organization=Sonarproject \
-                    -Dsonar.projectName=jenkins \
-                    -Dsonar.projectKey=sonarproject456_jenkins \
-                    -Dsonar.java.binaries=. \
-                    -Dsonar.exclusions=**/trivy-report.txt
-                    '''
+               sh '''
+                $SCANNER_HOME/bin/sonar-scanner \
+                 -Dsonar.organization=Sonarproject \
+                 -Dsonar.projectName=jenkins \
+                 -Dsonar.projectKey=sonarproject456_jenkins \
+                 -Dsonar.java.binaries=. \
+                 -Dsonar.exclusions=**/trivy-report.txt
+                '''
                 }
             }
         }

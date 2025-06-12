@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    environment {
+    IMAGE_NAME = 'my-app-image'
+    BUILD_TAG = "${BUILD_NUMBER}"
+}
     stages {
         stage('Checkout From Git') {
             steps {

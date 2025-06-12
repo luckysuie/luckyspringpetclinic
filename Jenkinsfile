@@ -53,6 +53,12 @@ pipeline {
                         waitForQualityGate abortPipeline: true, credentialsId: 'sonartoken'
                     }
                 }
+                }   
+        stage('Build Docker Image') {
+                    steps {
+                        echo 'Building Docker image...'
+                        docker.build ("$IMAGE_NAME:$BUILD_TAG")
+                    }
                 }
             }       
         }

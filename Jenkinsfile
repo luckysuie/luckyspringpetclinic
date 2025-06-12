@@ -5,11 +5,6 @@ pipeline {
             steps {
                 git branch: 'main', url: 'https://github.com/luckysuie/luckyspringpetclinic.git'
             }
-        stage('maven Compile') {
-                steps {
-                    sh 'mvn compile'
-                }
-            }
+            } 
         }
     }
-}

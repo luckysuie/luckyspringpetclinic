@@ -18,5 +18,11 @@ pipeline {
                 sh 'mvn test'
             }
         }
+        stage ('Trivy Scan') {
+            steps {
+                echo 'Running Trivy scan...'
+                sh 'trivy fs --exit-code 1 --severity HIGH,CRITICAL .'
+            }
+        }
     }
 }

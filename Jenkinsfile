@@ -9,6 +9,7 @@ pipeline {
         ACR_LOGIN_SERVER = "${ACR_NAME}.azurecr.io"
         FULL_IMAGE_NAME = "${ACR_NAME}.azurecr.io/${IMAGE_NAME}:${BUILD_TAG}"
         RESOURCE_GROUP = 'demo-rg'
+        CLUSTER_NAME = 'demo-aks'
     }
 
     stages {
@@ -95,6 +96,19 @@ pipeline {
                         docker tag ${IMAGE_NAME}:${BUILD_TAG} ${FULL_IMAGE_NAME}
                         docker push ${FULL_IMAGE_NAME}
                     '''
+                }
+            }
+        }
+      stage('Login to Kuberetes') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'azure-credentials', usernameVariable: 'AZURE_USERNAME', passwordVariable: 'AZURE_PASSWORD')]) {
+                    script {
+                        echo "Logging into Azure kubernetes Service..."
+                        sh '''
+                            az login --service-principal -u "$AZURE_USERNAME" -p "$AZURE_PASSWORD" --tenant "$TENANT_ID"
+                            az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME
+                        '''
+                    }
                 }
             }
         }

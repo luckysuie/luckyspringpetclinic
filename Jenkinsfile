@@ -1,9 +1,12 @@
 pipeline {
     agent any
-
     environment {
         IMAGE_NAME = 'my-app-image'
-        BUILD_TAG = "${BUILD_NUMBER}"
+        BUILD_TAG = "latest"
+        TENANT_ID = '9288e819-a217-4590-8b41-5088c8ee0457'
+        ACR_NAME = 'dockerregnodejss'
+        ACR_LOGIN_SERVER = "${ACR_NAME}.azurecr.io"
+        RESOURCE_GROUP = 'demo-rg'
     }
 
     stages {
@@ -77,15 +80,16 @@ pipeline {
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Login to Azure Container Registry') {
             steps {
-                echo 'Running Docker container on port 9090...'
-                sh """
-                    docker stop ${IMAGE_NAME} || true
-                    docker rm ${IMAGE_NAME} || true
-                    docker run -d --name ${IMAGE_NAME} -p 9090:8080 ${IMAGE_NAME}:${BUILD_TAG}
-                """
+                withCredentials([usernamePassword(credentialsId: 'azure-credentials', usernameVariable: 'AZURE_USERNAME', passwordVariable: 'AZURE_PASSWORD')]) {
+                script {
+                    echo "logging into Azure Container Registry..."
+                    sh "az login --service-principal -u $AZURE_USERNAME -p $AZURE_PASSWORD --tenant <your-tenant-id>"
+                    sh "az acr login --name dockerregnodejss"
+                }
             }
         }
     }
+}
 }

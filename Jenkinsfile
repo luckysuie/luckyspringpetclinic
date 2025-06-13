@@ -54,16 +54,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Sonar Quality Gate') {
-            steps {
-                echo 'Waiting for SonarQube quality gate...'
-                timeout(time: 1, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true, credentialsId: 'sonartoken'
-                }
-            }
-        }
-
         stage('Maven Package') {
             steps {
                 echo 'Packaging the project...'

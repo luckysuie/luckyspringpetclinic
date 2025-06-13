@@ -69,17 +69,18 @@ pipeline {
                 }
             }
         }
-
-        stage('Login to Azure Container Registry') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'azure-credentials', usernameVariable: 'AZURE_USERNAME', passwordVariable: 'AZURE_PASSWORD')]) {
-                script {
-                    echo "logging into Azure Container Registry..."
-                    sh "az login --service-principal -u $AZURE_USERNAME -p $AZURE_PASSWORD --tenant <your-tenant-id>"
-                    sh "az acr login --name dockerregnodejss"
-                }
+stage('Login to Azure Container Registry') {
+    steps {
+        withCredentials([usernamePassword(credentialsId: 'azure-credentials', usernameVariable: 'AZURE_USERNAME', passwordVariable: 'AZURE_PASSWORD')]) {
+            script {
+                echo "logging into Azure Container Registry..."
+                sh '''
+                    az login --service-principal -u "$AZURE_USERNAME" -p "$AZURE_PASSWORD" --tenant "TENANT_ID"
+                    az acr login --name dockerregnodejss
+                '''
             }
         }
     }
-}
+}     
+    }
 }

@@ -75,7 +75,7 @@ stage('Login to Azure Container Registry') {
             script {
                 echo "logging into Azure Container Registry..."
                 sh '''
-                    az login --service-principal -u "$AZURE_USERNAME" -p "$AZURE_PASSWORD" --tenant "TENANT_ID"
+                    az login --service-principal -u "$AZURE_USERNAME" -p "$AZURE_PASSWORD" --tenant "$TENANT_ID"
                     az acr login --name dockerregnodejss
                 '''
             }

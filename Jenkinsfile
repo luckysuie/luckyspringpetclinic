@@ -112,5 +112,15 @@ pipeline {
                 }
             }
         }
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    echo 'Deploying to Kubernetes...'
+                    sh '''
+                        kubectl apply -f k8s/petclinic.yml
+                    '''
+                }
+            }
+        }
     }
 }

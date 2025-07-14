@@ -1,7 +1,9 @@
 // Deploy a Java Spring Boot application to AKS using Maven, Docker, ACR, sonar Trivy via Jenkins Pipeline.
 pipeline {
     agent any
-
+    tools {
+        maven 'Maven 3.9.10'
+    }
     stages {
         stage('Checkout From Git') {
             steps {

@@ -4,6 +4,10 @@ pipeline {
     tools {
         maven 'maven'
     }
+    environment {
+        ImageName = 'my-app-image'
+        BUILD_TAG = "latest"
+    }
     stages {
         stage('Checkout From Git') {
             steps {
@@ -55,6 +59,14 @@ pipeline {
                 echo 'Publishing SonarQube report...'
                 timeout(time: 2, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image...'
+                script {
+                    docker.build("${ImageName}:${BUILD_TAG}")
                 }
             }
         }

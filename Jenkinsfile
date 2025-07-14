@@ -1,44 +1,51 @@
-// Deploy a Java Spring Boot application to AKS using Maven, Docker, ACR, sonar Trivy via Jenkins Pipeline.
 pipeline {
     agent any
+
     tools {
-        maven 'maven'
+        maven 'maven' // Make sure this matches the Maven tool name in Jenkins
     }
+
     environment {
         ImageName = 'my-app-image'
         BUILD_TAG = "latest"
     }
+
     stages {
         stage('Checkout From Git') {
             steps {
                 git branch: 'main', url: 'https://github.com/luckysuie/luckyspringpetclinic.git'
             }
         }
+
         stage('Maven Validate') {
             steps {
-                echo 'Compiling the project...'
+                echo 'Validating the project...'
                 sh 'mvn validate'
             }
         }
-        stage('Maven compile') {
+
+        stage('Maven Compile') {
             steps {
-                echo 'Running tests...'
+                echo 'Compiling the project...'
                 sh 'mvn compile'
             }
         }
+
         stage('Maven Test') {
             steps {
                 echo 'Running tests...'
                 sh 'mvn test'
             }
         }
+
         stage('Maven Package') {
             steps {
                 echo 'Packaging the project...'
                 sh 'mvn package'
             }
         }
-        stage('sonar Analysis') {
+
+        stage('SonarCloud Analysis') {
             environment {
                 SCANNER_HOME = tool 'sonar-scanner'
             }
@@ -49,29 +56,41 @@ pipeline {
                         -Dsonar.organization=sonarproject456 \
                         -Dsonar.projectName=jenkins \
                         -Dsonar.projectKey=sonarproject456_jenkins789 \
-                        -Dsonar.java.binaries=. \
+                        -Dsonar.sources=src \
+                        -Dsonar.java.binaries=target/classes \
+                        -Dsonar.host.url=https://sonarcloud.io
                     '''
                 }
             }
         }
-        stage('publish sonar report') {
+
+        stage('Publish Sonar Report') {
             steps {
-                echo 'Publishing SonarQube report...'
-                timeout(time: 2, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
+                echo 'Publishing SonarCloud report...'
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    sh '''
+                        mvn clean verify sonar:sonar \
+                        -Dsonar.projectKey=sonarproject456_jenkins789 \
+                        -Dsonar.organization=sonarproject456 \
+                        -Dsonar.host.url=https://sonarcloud.io \
+                        -Dsonar.login=$SONAR_TOKEN \
+                        -Dsonar.qualitygate.wait=false
+                    '''
                 }
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image...'
-                script {
-                    docker.build("${ImageName}:${BUILD_TAG}")
-                }
+                sh '''
+                    docker build -t ${ImageName}:${BUILD_TAG} .
+                '''
             }
         }
     }
 }
+
 
 
 

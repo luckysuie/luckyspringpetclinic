@@ -1,40 +1,39 @@
 // Deploy a Java Spring Boot application to AKS using Maven, Docker, ACR, sonar Trivy via Jenkins Pipeline.
 pipeline {
     agent any
-    {
-    // tools {
-    //     maven 'maven'
-    // }
-    // stages {
-    //     stage('Checkout From Git') {
-    //         steps {
-    //             git branch: 'main', url: 'https://github.com/luckysuie/luckyspringpetclinic.git'
-    //         }
-    //     }
-    //     stage('Maven Validate') {
-    //         steps {
-    //             echo 'Compiling the project...'
-    //             sh 'mvn validate'
-    //         }
-    //     }
-    //     stage('Maven compile') {
-    //         steps {
-    //             echo 'Running tests...'
-    //             sh 'mvn compile'
-    //         }
-    //     }
-    //     stage('Maven Test') {
-    //         steps {
-    //             echo 'Running tests...'
-    //             sh 'mvn test'
-    //         }
-    //     }
-    //     stage('Maven Package') {
-    //         steps {
-    //             echo 'Packaging the project...'
-    //             sh 'mvn package'
-    //         }
-    //     }
+    tools {
+        maven 'maven'
+    }
+    stages {
+        stage('Checkout From Git') {
+            steps {
+                git branch: 'main', url: 'https://github.com/luckysuie/luckyspringpetclinic.git'
+            }
+        }
+        stage('Maven Validate') {
+            steps {
+                echo 'Compiling the project...'
+                sh 'mvn validate'
+            }
+        }
+        stage('Maven compile') {
+            steps {
+                echo 'Running tests...'
+                sh 'mvn compile'
+            }
+        }
+        stage('Maven Test') {
+            steps {
+                echo 'Running tests...'
+                sh 'mvn test'
+            }
+        }
+        stage('Maven Package') {
+            steps {
+                echo 'Packaging the project...'
+                sh 'mvn package'
+            }
+        }
         stage('sonar Analysis') {
             environment {
                 SCANNER_HOME = tool 'sonar-scanner'

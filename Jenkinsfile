@@ -34,6 +34,27 @@ pipeline {
                 sh 'mvn package'
             }
         }
+        stage('sonar Analysis') {
+            environment {
+                SCANNER_HOME = tool 'sonar-scanner'
+            }
+            steps {
+                withSonarQubeEnv('sonarserver') {
+                    sh '''
+                        $SCANNER_HOME/bin/sonar-scanner \
+                        -Dsonar.organization=sonarproject456 \
+                        -Dsonar.projectName=jenkins \
+                        -Dsonar.projectKey=sonarproject456_jenkins789 \
+                        -Dsonar.java.binaries=. \
+                    '''
+                }
+            }
+        stage('publish sonar report') {
+            steps {
+                echo 'Publishing sonar report...'
+                sh 'mvn sonar:sonar'
+            }
+        }
     }
 }
 

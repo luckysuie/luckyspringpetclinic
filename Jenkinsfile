@@ -84,7 +84,7 @@ pipeline {
             steps {
                 echo 'Building Docker image...'
                 sh '''
-                    sudo docker build -t ${ImageName}:${BUILD_TAG} .
+                    docker build -t ${ImageName}:${BUILD_TAG} .
                 '''
             }
         }

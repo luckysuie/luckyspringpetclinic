@@ -49,10 +49,11 @@ pipeline {
                     '''
                 }
             }
+        }
         stage('publish sonar report') {
             steps {
-                echo 'Publishing sonar report...'
-                sh 'mvn sonar:sonar'
+                echo 'Publishing SonarQube report...'
+                waitForQualityGate abortPipeline: true
             }
         }
     }

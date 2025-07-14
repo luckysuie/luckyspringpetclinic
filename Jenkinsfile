@@ -53,7 +53,9 @@ pipeline {
         stage('publish sonar report') {
             steps {
                 echo 'Publishing SonarQube report...'
-                waitForQualityGate abortPipeline: true
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
             }
         }
     }

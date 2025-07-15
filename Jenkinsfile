@@ -85,6 +85,7 @@ pipeline {
                 echo 'Building Docker image...'
                 sh '''
                     docker build -t ${ImageName}:${BUILD_TAG} .
+                    docker tag ${ImageName}:${BUILD_TAG} luckyregistry.azurecr.io/${ImageName}:${BUILD_TAG}
                 '''
             }
         }

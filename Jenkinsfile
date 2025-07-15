@@ -130,6 +130,7 @@ pipeline {
                     sh '''
                         az aks get-credentials --resource-group LUCKY --name demo-aks
                         kubectl apply -f k8s/petclinic.yml
+                        kubectl get all
                     '''
                 }
             }

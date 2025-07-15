@@ -1,43 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: springboot-app
+  name: luckywebapp
   labels:
-    app: springboot-app
+    app: luckywebapp
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: springboot-app
+      app: luckywebapp
   template:
     metadata:
       labels:
-        app: springboot-app
+        app: luckywebapp
     spec:
+      imagePullSecrets:
+        - name: acr-secret  # Ensure this matches your Kubernetes secret name for ACR
       containers:
-      - name: springboot-app
-        image: luckyregistry.azurecr.io/my-app-image:latest
+      - name: luckywebapp
+        image: luckyregistry.azurecr.io/my-app-image:latest  # Replace with your actual image name
         ports:
-        - containerPort: 8080
-        resources:
-          requests:
-            cpu: "250m"
-            memory: "512Mi"
-          limits:
-            cpu: "500m"
-            memory: "1Gi"
-        imagePullPolicy: Always
+        - containerPort: 80
 
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: springboot-service
+  name: luckywebapp-service
 spec:
+  type: LoadBalancer
   selector:
-    app: springboot-app
+    app: luckywebapp
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 8080
-  type: LoadBalancer
+      targetPort: 80

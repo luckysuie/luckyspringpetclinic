@@ -89,6 +89,16 @@ pipeline {
                 '''
             }
         }
+        stage('Trivy Scan') {
+            steps {
+                echo 'Running Trivy scan...'
+                sh '''
+                    trivy image --format table --severity HIGH,CRITICAL 
+                   --output trivy-report.txt luckyregistry.azurecr.io/${ImageName}:${BUILD_TAG} 
+            }
+                '''
+            }
+        }
         stage('Login to ACR and Push Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'azure-sp', usernameVariable: 'AZURE_USERNAME', passwordVariable: 'AZURE_PASSWORD'),

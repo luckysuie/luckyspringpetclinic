@@ -88,6 +88,20 @@ pipeline {
                 '''
             }
         }
+        stage('Login to Azure Container Registry') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'azure-sp', usernameVariable: 'AZURE_USERNAME', passwordVariable: 'AZURE_PASSWORD')]) {
+                    script {
+                        echo "Logging into Azure Container Registry..."
+                        sh '''
+                            az login --service-principal -u "$AZURE_USERNAME" -p "$AZURE_PASSWORD" --tenant "$TENANT_ID"
+                            az acr login --name luckyregistry
+                            docker push luckyregistry.azurecr.io/${ImageName}:${BUILD_TAG}
+                        '''
+                    }
+                }
+            }
+        }
     }
 }
 

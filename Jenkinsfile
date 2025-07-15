@@ -98,6 +98,11 @@ pipeline {
             }
                 '''
             }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'trivy-report.txt'
+                }
+            }
         }
         stage('Login to ACR and Push Image') {
             steps {

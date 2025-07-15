@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven' // Make sure this matches the Maven tool name in Jenkins
+        maven 'maven' // Ensure this matches the Maven installation name in Jenkins
     }
 
     environment {
@@ -47,7 +47,7 @@ pipeline {
 
         stage('SonarCloud Analysis') {
             environment {
-                SCANNER_HOME = tool 'sonar-scanner'
+                SCANNER_HOME = tool 'sonar-scanner' // Matches tool config in Jenkins
             }
             steps {
                 withSonarQubeEnv('sonarserver') {
@@ -89,13 +89,13 @@ pipeline {
                 '''
             }
         }
+
         stage('Trivy Scan') {
             steps {
                 echo 'Running Trivy scan...'
                 sh '''
-                    trivy image --format table --severity HIGH,CRITICAL 
-                   --output trivy-report.txt luckyregistry.azurecr.io/${ImageName}:${BUILD_TAG} 
-            }
+                    trivy image --format table --severity HIGH,CRITICAL \
+                        --output trivy-report.txt luckyregistry.azurecr.io/${ImageName}:${BUILD_TAG}
                 '''
             }
             post {
@@ -104,10 +104,13 @@ pipeline {
                 }
             }
         }
+
         stage('Login to ACR and Push Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'azure-sp', usernameVariable: 'AZURE_USERNAME', passwordVariable: 'AZURE_PASSWORD'),
-                string(credentialsId: 'azure-tenant', variable: 'TENANT_ID')]) {
+                withCredentials([
+                    usernamePassword(credentialsId: 'azure-sp', usernameVariable: 'AZURE_USERNAME', passwordVariable: 'AZURE_PASSWORD'),
+                    string(credentialsId: 'azure-tenant', variable: 'TENANT_ID')
+                ]) {
                     script {
                         echo "Logging into Azure Container Registry..."
                         sh '''
@@ -119,6 +122,7 @@ pipeline {
                 }
             }
         }
+
         stage('Deploy to Kubernetes') {
             steps {
                 script {
@@ -132,6 +136,7 @@ pipeline {
         }
     }
 }
+
 
 
 

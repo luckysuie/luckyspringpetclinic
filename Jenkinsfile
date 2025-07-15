@@ -88,9 +88,10 @@ pipeline {
                 '''
             }
         }
-        stage('Login to Azure Container Registry') {
+        stage('Login to ACR and Push Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'azure-sp', usernameVariable: 'AZURE_USERNAME', passwordVariable: 'AZURE_PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: 'azure-sp', usernameVariable: 'AZURE_USERNAME', passwordVariable: 'AZURE_PASSWORD'),
+                string(credentialsId: 'azure-tenant', variable: 'TENANT_ID')]) {
                     script {
                         echo "Logging into Azure Container Registry..."
                         sh '''
@@ -99,6 +100,17 @@ pipeline {
                             docker push luckyregistry.azurecr.io/${ImageName}:${BUILD_TAG}
                         '''
                     }
+                }
+            }
+        }
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    echo 'Deploying to Kubernetes...'
+                    sh '''
+                        az aks get-credentials --resource-group LUCKY --name demo-aks
+                        kubectl apply -f k8s/petclinic.yml
+                    '''
                 }
             }
         }

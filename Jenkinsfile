@@ -112,7 +112,7 @@ pipeline {
                     string(credentialsId: 'azure-tenant', variable: 'TENANT_ID')
                 ]) {
                     script {
-                        echo "Logging into Azure Container Registry..."
+                        echo "Logging into Azure Containerrr Registry..."
                         sh '''
                             az login --service-principal -u "$AZURE_USERNAME" -p "$AZURE_PASSWORD" --tenant "$TENANT_ID"
                             az acr login --name luckyregistry

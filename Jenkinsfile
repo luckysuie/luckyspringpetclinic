@@ -105,7 +105,7 @@ pipeline {
             }
         }
 
-        stage('Login to ACR and Pushhh Imageeeeee') {
+        stage('Login to ACR and Pushhhhh Imageeeeee') {
             steps {
                 withCredentials([
                     usernamePassword(credentialsId: 'azure-sp', usernameVariable: 'AZURE_USERNAME', passwordVariable: 'AZURE_PASSWORD'),

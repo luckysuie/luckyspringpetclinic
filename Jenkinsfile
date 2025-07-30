@@ -19,7 +19,7 @@ pipeline {
 
         stage('Maven Validate') {
             steps {
-                echo 'Validating the project......'
+                echo 'Validating the project........'
                 sh 'mvn validate'
             }
         }

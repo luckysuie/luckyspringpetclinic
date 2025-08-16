@@ -2,6 +2,9 @@
 // JEnkinscode for the C29 Batch project-6
 pipeline{
     agent any
+    tools{
+        maven 'maven' // Ensure this matches the Maven installation name in Jenkins
+    }
     stages{
         stage("git checkout"){
             steps{

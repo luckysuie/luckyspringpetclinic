@@ -67,19 +67,11 @@ pipeline{
                 '''
             }
         }
-        stage('Downloading artifact'){
-            steps{
-                echo 'Downloading artifact...'
-                sh '''
-                    az storage blob download --container-name mycontainer --name myapp.jar --file myapp.jar --account-name mystorageaccount
-                '''
-            }
-        }
         stage('Deploy to Azure Web App'){
             steps{
                 echo 'Deploying to Azure Web App...'
                 sh '''
-                    az webapp deploy --resource-group myResourceGroup --name myWebApp --src-path myapp.jar
+                    az webapp deploy --resource-group rg-dotnet-app  --name luvkywebapp --src-path myapp.jar
                 '''
             }
         }

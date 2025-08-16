@@ -15,6 +15,72 @@ pipeline{
             steps{
                 echo 'Compiling the project...'
                 sh 'mvn package'
+                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+            }
+        }
+        stage('login to Azure'){
+            steps{
+                withCredentials([usernamePassword(credentialsId: 'azure-sp', usernameVariable: 'AZURE_USERNAME', passwordVariable: 'AZURE_PASSWORD'),
+                                 string(credentialsId: 'azure-tenant', variable: 'TENANT_ID')]){
+                    script{
+                        echo "Logging into Azure..."
+                        sh '''
+                            az login --service-principal -u "$AZURE_USERNAME" -p "$AZURE_PASSWORD" --tenant "$TENANT_ID"
+                        '''
+                    }
+                }
+            }
+        }
+        stage('Terraform Init'){
+            steps{
+                echo 'Initializing Terraform...'
+                sh '''
+                    cd infra
+                    terraform init
+                '''
+            }
+        }
+        stage('Terraform validate'){
+            steps{
+                echo 'Validating Terraform configuration...'
+                sh '''
+                    cd infra
+                    terraform validate
+                '''
+            }
+        }
+        stage('Terraform Plan'){
+            steps{
+                echo 'Planning Terraform deployment...'
+                sh '''
+                    cd infra
+                    terraform plan -out=tfplan
+                '''
+            }
+        }
+        stage('Terraform Apply'){
+            steps{
+                echo 'Applying Terraform configuration...'
+                sh '''
+                    cd infra
+                    terraform apply -auto-approve tfplan
+                '''
+            }
+        }
+        stage('Downloading artifact'){
+            steps{
+                echo 'Downloading artifact...'
+                sh '''
+                    az storage blob download --container-name mycontainer --name myapp.jar --file myapp.jar --account-name mystorageaccount
+                '''
+            }
+        }
+        stage('Deploy to Azure Web App'){
+            steps{
+                echo 'Deploying to Azure Web App...'
+                sh '''
+                    az webapp deploy --resource-group myResourceGroup --name myWebApp --src-path myapp.jar
+                '''
             }
         }
     }

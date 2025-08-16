@@ -11,7 +11,7 @@ pipeline{
                 git branch: 'main', url: 'https://github.com/luckysuie/luckyspringpetclinic.git'
             }
         }
-        stage(Maven package){
+        stage('Maven package'){
             steps{
                 echo 'Compiling the project...'
                 sh 'mvn package'

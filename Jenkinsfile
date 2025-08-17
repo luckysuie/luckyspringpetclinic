@@ -21,6 +21,7 @@ pipeline{
             steps{
                 echo 'Publishing artifact...'
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                mv artifacts 'target/*.jar', 'myapp.jar'
             }
         }
         stage('login to Azure'){
@@ -76,7 +77,7 @@ pipeline{
             steps{
                 echo 'Deploying to Azure Web App...'
                 sh '''
-                   JAR_FILE=$(ls target/*.jar | head -n 1)
+                   cd target
                    az webapp deploy --resource-group lucky-rg --name luckywebapp --src-path "$JAR_FILE" --type jar
                 '''
             }

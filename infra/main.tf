@@ -25,9 +25,9 @@ resource "azurerm_linux_web_app" "app" {
   site_config {
     always_on = false
     application_stack {
-      java_version = "17"              # Java SE (for Spring Boot JAR)
+      java_version = "21"              # Java SE (for Spring Boot JAR)
       java_server = "JAVA"          # Use Tomcat for Java web apps
-      java_server_version = "17"    # Match with java_version
+      java_server_version = "21"    # Match with java_version
     }
   }
   app_settings = {

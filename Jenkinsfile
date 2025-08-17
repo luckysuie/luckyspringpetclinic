@@ -1,5 +1,5 @@
 
-// JEnkinscode for the C29 Batch project-6
+// JEnkinscode for the C29 Batch project-7
 pipeline{
     agent any
     tools{
@@ -15,7 +15,12 @@ pipeline{
             steps{
                 echo 'Compiling the project...'
                 sh 'mvn package'
-                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+            }
+        }
+        stage('publish artifact'){
+            steps{
+                echo 'Publishing artifact...'
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
         }
         stage('login to Azure'){
@@ -71,7 +76,8 @@ pipeline{
             steps{
                 echo 'Deploying to Azure Web App...'
                 sh '''
-                    az webapp deploy --resource-group rg-dotnet-app  --name luvkywebapp --src-path myapp.jar
+                   JAR_FILE=$(ls target/*.jar | head -n 1)
+                   az webapp deploy --resource-group lucky-rg --name luckywebapp --src-path "$JAR_FILE" --type jar
                 '''
             }
         }

@@ -21,7 +21,7 @@ pipeline{
             steps{
                 echo 'Publishing artifact...'
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-                mv artifacts 'target/*.jar', 'myapp.jar'
+                mv artifacts 'target/*.jar', 'target/luckyspringpetclinic.jar'
             }
         }
         stage('login to Azure'){

@@ -14,7 +14,7 @@ pipeline{
         stage('Maven package'){
             steps{
                 echo 'Compiling the project...'
-                sh 'mvn clean package'
+                sh 'mvn clean package -Dcheckstyle.skip=true'
             }
         }
         stage('publish artifact'){

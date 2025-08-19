@@ -80,7 +80,7 @@ pipeline{
                 echo 'Deploying to Azure Web App...'
                 sh '''
                    cd target
-                   az webapp deploy --resource-group lucky-rg --name luckywebapp --src-path luckyspringpetclinic.jar --type jar
+                   az webapp deploy --resource-group john --name lucky-web-app --src-path luckyspringpetclinic.jar --type jar
                 '''
             }
         }
